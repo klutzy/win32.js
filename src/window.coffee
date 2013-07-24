@@ -150,6 +150,10 @@ class Window
         me = $("#hwnd-#{@hwnd}")
         me.children(".title-bar").children(".title-button-group").children(".title-button.close").click =>
             @on_proc(0x0010, 0, 0)
+        me.draggable({
+            handle: ".title",
+            start: ->
+        })
 
     on_destroy: ->
         me = $("#hwnd-#{@hwnd}")
