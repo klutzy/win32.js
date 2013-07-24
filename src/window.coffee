@@ -154,6 +154,11 @@ class Window
             handle: ".title",
             start: ->
         })
+        me.resizable({
+            handles: "all",
+            minWidth: parseInt(me.css( "min-width" )),
+            minHeight: parseInt(me.css( "min-height" )),
+        })
 
     on_destroy: ->
         me = $("#hwnd-#{@hwnd}")
