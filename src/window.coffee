@@ -30,10 +30,6 @@ class System
         @mq.push(msg)
         return 0
 
-    def_proc: (msg) ->
-        # TODO
-        win = @windows[msg.hwnd]
-
 system = new System(window.Win32.desktop)
 window.Win32.system = system # EXPORT
 
@@ -48,10 +44,15 @@ class Window
         @me = null
         @parent = system.desktop
 
-        @cls = system.classes[clsname]
+        @cls = system.classes[@clsname]
+        console.log("clsname:", @clsname, @cls)
 
         @cmd_show = -1
 
+        if @cls
+            @create()
+
+    create: ->
         # CW_USEDEFAULT
         if @x == -2147483648
             @x = 0
@@ -73,18 +74,23 @@ class Window
     </div>
 </div>""")
 
-        @me = $('<div class="window" />')
+        @me = $("<div class='window' id='hwnd-#{@hwnd}'/>")
         @me.append(title_bar)
 
         @me.children(".title-bar").children(".title-button-group").children(".title-button.close").click =>
-            console.log("click:", this)
-            #on_click(0, 0)
+            @on_proc(0x0010, 0, 0)
 
     css: (c) ->
-        console.log("css:", c)
-        @me.css(c)
+        me = $("#hwnd-#{@hwnd}")
+        console.log("css:", c, me)
+        if me
+            me.css(c)
 
     reshape: ->
+        me = $("#hwnd-#{@hwnd}")
+        if me == null
+            return
+
         console.log("style", @style)
         is_vis = @style & 0x10000000
         dis = 'block'
@@ -100,25 +106,34 @@ class Window
             when 0x0001 # WM_CREATE
                 return 0
             when 0x0010 # WM_CLOSE
+                @destroy()
                 return 0
         return 0
 
+    destroy: ->
+        @on_proc(0x0002, 0, 0) # WM_DESTROY
+        @on_proc(0x0082, 0, 0) # WM_NCDESTROY
+        delete system.windows[@hwnd]
+        return 1
+
     on_proc: (m, w, l) ->
-        console.log("on_proc:", m, w, l, @cls)
+        console.log("on_proc:", m, w, l, @cls, "hwnd:", @hwnd)
         ret = 0
         if @cls and @cls.wnd_proc
             func = FUNCTION_TABLE[@cls.wnd_proc]
             if func
                 ret = func(@hwnd, m, w, l)
+        else
+            ret = @def_proc(m, w, l)
         @on_after_proc(m, w, l, ret)
         return ret
 
     on_after_proc: (m, w, l, ret) ->
         # ok, wnd_proc did something.
         # e.g. if I agreed to WM_CLOSE, do on_close.
+        console.log("on_after_proc", m, w, l, ret)
         switch m
             when 0x0001 # WM_CREATE
-                console.log("after WM_CREATE: ", ret)
                 if ret == 0
                     @on_create()
             when 0x0002 # WM_DESTORY
@@ -132,14 +147,17 @@ class Window
         return ret
 
     on_create: () ->
-        console.log("on_create: creating!!")
-        @parent.append(@me)
-        console.log(@me)
+        console.log("on_create:", @me)
+        ret = @parent.append(@me)
+        @me = null
 
     on_destroy: ->
-        if @me
-            @parent.removeChild(@me)
-        @me = null
+        me = $("#hwnd-#{@hwnd}")
+        console.log("on_destroy:", me)
+        if me
+            @css({display: 'none'})
+            me.remove()
+            console.log(me)
 
     on_move: (x, y) ->
         @x = x
