@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <link rel="stylesheet" href="lib/win98.css" type="text/css" media="screen">
+    <title>Hello World!</title>
+</head>
+
+<body>
+
+<div class="windows windows-98 windows-locale-en_US ">
+    <div class="desktop" id="desktop">
+        <ul class="desktop-listview listview-largeicon">
+            <li data-icon="my-computer"><span>My Computer</span></li>
+            <li data-icon="recycling-bin"><span>Recycle Bin</span></li>
+        </ul>
+    </div>
+</div>
+
+    <script src="lib/vendor/jquery.min.js"></script>
+    <script src="lib/vendor/jquery-ui.min.js"></script>
+    <script src="lib/jquery.mswin.js"></script>
+    <script src="lib/jquery.mswin.taskbar.js"></script>
+    <script src="lib/jquery.mswin.listview.js"></script>
+    <script src="lib/jquery.mswin.menu.js"></script>
+    <script>
+$('.window').window();
+$('.taskbar').taskbar();
+$('.desktop-listview').listview();
+$('.menu-bar').menubar();
+$('.taskbar ul.start').menubar({
+    position_toplevel: {
+        my: "left bottom",
+        at: "left top",
+    },
+});
+    </script>
+    <script>
+window.Win32 = {};
+window.Win32.desktop = $('#desktop'); // will be used by system
+    </script>
+    <script src="hello.js"></script>
+
+</body>
+
+</html>

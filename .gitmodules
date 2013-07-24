@@ -1,0 +1,3 @@
+[submodule "lib/fake-mswin"]
+	path = lib/fake-mswin
+	url = https://github.com/puzzlet/fake-mswin.git
