@@ -41,7 +41,6 @@ window.Win32.Class = Class # EXPORT
 class Window
     constructor: (@hwnd, @clsname, @name, @style, \
     @x, @y, @w, @h, @m, @i, @param, @exstyle) ->
-        @me = null
         @parent = system.desktop
 
         @cls = system.classes[@clsname]
@@ -49,8 +48,7 @@ class Window
 
         @cmd_show = -1
 
-        if @cls
-            @create()
+        @create()
 
     create: ->
         # CW_USEDEFAULT
@@ -62,23 +60,6 @@ class Window
             @w = 0
         if @h == -2147483648
             @h = 0
-
-        title_bar = $("""
-<div class="title-bar">
-    <div class="title-icon"></div>
-    <div class="title">#{@name}</div>
-    <div class="title-button-group">
-        <div class="title-button minimize"></div>
-        <div class="title-button maximize"></div>
-        <div class="title-button close"></div>
-    </div>
-</div>""")
-
-        @me = $("<div class='window' id='hwnd-#{@hwnd}'/>")
-        @me.append(title_bar)
-
-        @me.children(".title-bar").children(".title-button-group").children(".title-button.close").click =>
-            @on_proc(0x0010, 0, 0)
 
     css: (c) ->
         me = $("#hwnd-#{@hwnd}")
@@ -147,9 +128,28 @@ class Window
         return ret
 
     on_create: () ->
-        console.log("on_create:", @me)
-        ret = @parent.append(@me)
-        @me = null
+        if !@cls
+            return
+
+        title_bar = $("""
+<div class="title-bar">
+    <div class="title-icon"></div>
+    <div class="title">#{@name}</div>
+    <div class="title-button-group">
+        <div class="title-button minimize"></div>
+        <div class="title-button maximize"></div>
+        <div class="title-button close"></div>
+    </div>
+</div>""")
+
+        me = $("<div class='window' id='hwnd-#{@hwnd}'/>")
+        me.append(title_bar)
+        console.log("on_create:", me)
+        ret = @parent.append(me)
+
+        me = $("#hwnd-#{@hwnd}")
+        me.children(".title-bar").children(".title-button-group").children(".title-button.close").click =>
+            @on_proc(0x0010, 0, 0)
 
     on_destroy: ->
         me = $("#hwnd-#{@hwnd}")
