@@ -23,7 +23,7 @@ src/%.js: src/%.coffee
 .PHONY: examples
 examples: $(EXAMPLES)
 	mkdir -p examples/lib
-	$(MAKE) -C lib/fake-mswin assets OUTDIR=../../examples/lib
+	$(MAKE) -C lib/fake-mswin all assets OUTDIR=../../examples/lib
 
 examples/%.js: examples/%.cpp all
 	$(EMXX) -o $@ --js-library src/library_win32.js --pre-js src/window.js \
