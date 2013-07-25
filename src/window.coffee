@@ -59,6 +59,13 @@ class Window
         if @h == -2147483648
             @h = 0
 
+    get_name: ->
+        if !@cls
+            me = $("#hwnd-#{@hwnd}")
+            return me.val()
+
+        return @name
+
     css: (c) ->
         me = $("#hwnd-#{@hwnd}")
         console.log("css:", c, me)

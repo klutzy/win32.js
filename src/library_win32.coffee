@@ -93,6 +93,13 @@ LibraryWin32 = {
         #title = Util.u16($title)
         message = Util.u16($message)
         alert(message)
+
+    GetWindowTextW: (hwnd, $msg, msglen) ->
+        win = window.Win32.system.windows[hwnd]
+        if !win
+            return 0
+        msg = win.get_name()
+        return Util.str_to(msg, $msg, msglen)
 }
 
 autoAddDeps(LibraryWin32, '$Util')
