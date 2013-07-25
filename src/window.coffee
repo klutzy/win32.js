@@ -4,6 +4,8 @@ class System
         @classes = {}
         @windows = {}
 
+        @active_window = null
+
         @next_handle = 1
 
     alloc_handle: ->
@@ -149,8 +151,12 @@ class Window
             me.append(title_bar)
 
         parent = system.desktop
+        console.log("@parent:", @parent)
         if @parent
             parent = $("#hwnd-#{@parent.hwnd}")
+        else
+            system.active_window = this
+            me.children('.title-bar').addClass('ui-selected')
         console.log("on_create:", me, parent)
         console.log("hwnd", @hwnd)
         ret = parent.append(me)
