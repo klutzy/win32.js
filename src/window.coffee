@@ -188,6 +188,13 @@ class Window
                     @on_proc(0x0005, 0, w | (h << 16)) # WM_SIZE
                     @on_proc(0x0003, 0, x | (y << 16)) # WM_MOVE
             })
+        else
+            switch @clsname
+                when "BUTTON"
+                    me.click =>
+                        # XXX we must make button_wnd_proc() for this
+                        @parent.on_proc(0x0111, @m, 0) # WM_COMMAND
+
 
     on_destroy: ->
         me = $("#hwnd-#{@hwnd}")
