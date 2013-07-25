@@ -40,7 +40,7 @@ window.Win32.Class = Class # EXPORT
 
 class Window
     constructor: (@hwnd, @clsname, @name, @style, \
-    @x, @y, @w, @h, @m, @i, @param, @exstyle) ->
+    @x, @y, @w, @h, @parent, @m, @i, @param, @exstyle) ->
         @parent = system.desktop
 
         @cls = system.classes[@clsname]
@@ -48,9 +48,6 @@ class Window
 
         @cmd_show = -1
 
-        @create()
-
-    create: ->
         # CW_USEDEFAULT
         if @x == -2147483648
             @x = 0

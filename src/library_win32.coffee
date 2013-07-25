@@ -58,13 +58,17 @@ LibraryWin32 = {
             return window.Win32.system.send_msg({hwnd: hwnd, msg: 0x0018, w: 0, l: l})
         return 0
 
-    CreateWindowExW: (exstyle, $clsname, $name, style, x, y, w, h, m, i, param) ->
+    CreateWindowExW: (exstyle, $clsname, $name, style, x, y, w, h, \
+    parent, m, i, param) ->
         clsname = Util.u16($clsname)
         name = Util.u16($name)
         hwnd = window.Win32.system.alloc_handle();
 
+        if parent
+            parent = window.Win32.system.windows[parent]
         win = new window.Win32.Window(
-            hwnd, clsname, name, style, x, y,w, h, m, i, param, exstyle
+            hwnd, clsname, name, style, x, y, w, h,
+            parent, m, i, param, exstyle
         )
 
         window.Win32.system.windows[hwnd] = win;
