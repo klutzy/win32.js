@@ -81,6 +81,11 @@ LibraryWin32 = {
             return hwnd
         else
             return 0
+
+    MessageBoxW: (hwnd, $message, $title, v) ->
+        #title = Util.u16($title)
+        message = Util.u16($message)
+        alert(message)
 }
 
 autoAddDeps(LibraryWin32, '$Util')

@@ -18,6 +18,10 @@ HWND hello_label;
 extern "C"
 long CALLBACK wnd_proc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam) {
     switch (msg) {
+        case WM_CREATE:
+            MessageBox(wnd, L"MessageBox test", L"title", 0);
+            return 0;
+
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
