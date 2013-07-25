@@ -43,7 +43,7 @@ int CALLBACK WinMain(HINSTANCE inst, HINSTANCE prev_inst, char *cmd_line, int cm
     int res = RegisterClass(&cls);
 
     main_win = CreateWindow(cls_name, L"HelloWorld", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 700, 500, NULL, NULL, inst, 0);
-    hello_label = CreateWindow(L"EDIT", L"Hello World", WS_CHILD | WS_VISIBLE, 0, 0, 700, 500, main_win, NULL, inst, 0);
+    hello_label = CreateWindow(L"EDIT", L"Hello World", WS_CHILD | WS_VISIBLE, 0, 0, 100, 50, main_win, NULL, inst, 0);
 
     ShowWindow(main_win, cmd_show);
 
