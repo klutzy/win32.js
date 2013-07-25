@@ -1,5 +1,12 @@
 LibraryWin32 = {
     $Util:
+        str_to: (t, $p, len) ->
+            i = 0
+            while i < t.length
+                setValue($p + i*4, t.charCodeAt(i), 'i32')
+                i++
+            return i
+
         u16: (ptr, length) ->
             if (ptr == 0)
                 return ""
