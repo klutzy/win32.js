@@ -120,7 +120,9 @@ class Window
             when 0x0002 # WM_DESTORY
                 @on_destroy()
             when 0x0003 # WM_MOVE
-                @on_move(l >> 2, l & 0xFF)
+                @on_move(l & 0xFFFF, l >> 16)
+            when 0x0005 # WM_SIZE
+                @on_size(l & 0xFFFF, l >> 16)
             when 0x0018 # WM_SHOW
                 @on_show()
 
@@ -152,12 +154,24 @@ class Window
             @on_proc(0x0010, 0, 0)
         me.draggable({
             handle: ".title",
-            start: ->
+            drag: (e, u) =>
+                x = u.position.left
+                y = u.position.top
+                console.log("drag:", x, y)
+                @on_proc(0x0003, 0, x | (y << 16)) # WM_MOVE
         })
         me.resizable({
             handles: "all",
             minWidth: parseInt(me.css( "min-width" )),
             minHeight: parseInt(me.css( "min-height" )),
+            resize: (e, u) =>
+                x = u.position.left
+                y = u.position.top
+                w = u.size.width
+                h = u.size.height
+                console.log("resize:", x, y, w, h)
+                @on_proc(0x0005, 0, w | (h << 16)) # WM_SIZE
+                @on_proc(0x0003, 0, x | (y << 16)) # WM_MOVE
         })
 
     on_destroy: ->
@@ -171,6 +185,12 @@ class Window
     on_move: (x, y) ->
         @x = x
         @y = y
+
+    on_size: (w, h) ->
+        @x += (@w - w)
+        @y += (@h - h)
+        @w = w
+        @h = h
 
     on_show: () ->
         console.log("on_show:", @cmd_show, @style)
