@@ -14,17 +14,35 @@ extern "C" void emscripten_win32_loop();
 
 HWND main_win;
 HWND hello_label;
+HWND hello_button;
+
+enum {
+    IDC_HELLO_BUTTON = 101,
+};
 
 extern "C"
 long CALLBACK wnd_proc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam) {
     switch (msg) {
-        case WM_CREATE:
-            MessageBox(wnd, L"MessageBox test", L"title", 0);
+        case WM_CREATE: {
             return 0;
+        }
+        break;
 
-        case WM_DESTROY:
+        case WM_COMMAND: {
+            switch (LOWORD(wparam)) {
+                case IDC_HELLO_BUTTON: {
+                    MessageBox(wnd, L"Hello?", L"title", 0);
+                }
+                break;
+            }
+        }
+        break;
+
+        case WM_DESTROY: {
             PostQuitMessage(0);
             return 0;
+        }
+        break;
     }
 
     return DefWindowProc(wnd, msg, wparam, lparam);
@@ -43,7 +61,8 @@ int CALLBACK WinMain(HINSTANCE inst, HINSTANCE prev_inst, char *cmd_line, int cm
     int res = RegisterClass(&cls);
 
     main_win = CreateWindow(cls_name, L"HelloWorld", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 700, 500, NULL, NULL, inst, 0);
-    hello_label = CreateWindow(L"EDIT", L"Hello World", WS_CHILD | WS_VISIBLE, 0, 0, 100, 50, main_win, NULL, inst, 0);
+    hello_label = CreateWindow(L"EDIT", L"Hello", WS_CHILD | WS_VISIBLE, 0, 0, 100, 30, main_win, NULL, inst, 0);
+    hello_button = CreateWindow(L"BUTTON", L"World", WS_CHILD | WS_VISIBLE, 120, 0, 100, 30, main_win, (HMENU)IDC_HELLO_BUTTON, inst, 0);
 
     ShowWindow(main_win, cmd_show);
 

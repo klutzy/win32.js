@@ -131,9 +131,11 @@ class Window
         me = null
         if !@cls
             console.log("clss:", @clsname)
-            if @clsname == "EDIT"
-                value = @name
-                me = $("<input id='hwnd-#{@hwnd}' value='#{value}' />")
+            switch @clsname
+                when "EDIT"
+                    me = $("<input type='text' id='hwnd-#{@hwnd}' value='#{@name}' />")
+                when "BUTTON"
+                    me = $("<input type='button' id='hwnd-#{@hwnd}' value='#{@name}' />")
 
         else
             title_bar = $("""
