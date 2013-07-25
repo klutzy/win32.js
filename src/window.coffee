@@ -41,9 +41,8 @@ window.Win32.Class = Class # EXPORT
 class Window
     constructor: (@hwnd, @clsname, @name, @style, \
     @x, @y, @w, @h, @parent, @m, @i, @param, @exstyle) ->
-        @parent = system.desktop
 
-        @cls = system.classes[@clsname]
+        @cls = system.classes[@clsname] or null
         console.log("clsname:", @clsname, @cls)
 
         @cmd_show = -1
@@ -127,10 +126,15 @@ class Window
         return ret
 
     on_create: () ->
+        me = null
         if !@cls
-            return
+            console.log("clss:", @clsname)
+            if @clsname == "EDIT"
+                value = @name
+                me = $("<input id='hwnd-#{@hwnd}' value='#{value}' />")
 
-        title_bar = $("""
+        else
+            title_bar = $("""
 <div class="title-bar">
     <div class="title-icon"></div>
     <div class="title">#{@name}</div>
@@ -141,35 +145,41 @@ class Window
     </div>
 </div>""")
 
-        me = $("<div class='window' id='hwnd-#{@hwnd}'/>")
-        me.append(title_bar)
-        console.log("on_create:", me)
-        ret = @parent.append(me)
+            me = $("<div class='window' id='hwnd-#{@hwnd}'/>")
+            me.append(title_bar)
 
-        me = $("#hwnd-#{@hwnd}")
-        me.children(".title-bar").children(".title-button-group").children(".title-button.close").click =>
-            @on_proc(0x0010, 0, 0)
-        me.draggable({
-            handle: ".title",
-            drag: (e, u) =>
-                x = u.position.left
-                y = u.position.top
-                console.log("drag:", x, y)
-                @on_proc(0x0003, 0, x | (y << 16)) # WM_MOVE
-        })
-        me.resizable({
-            handles: "all",
-            minWidth: parseInt(me.css( "min-width" )),
-            minHeight: parseInt(me.css( "min-height" )),
-            resize: (e, u) =>
-                x = u.position.left
-                y = u.position.top
-                w = u.size.width
-                h = u.size.height
-                console.log("resize:", x, y, w, h)
-                @on_proc(0x0005, 0, w | (h << 16)) # WM_SIZE
-                @on_proc(0x0003, 0, x | (y << 16)) # WM_MOVE
-        })
+        parent = system.desktop
+        if @parent
+            parent = $("#hwnd-#{@parent.hwnd}")
+        console.log("on_create:", me, parent)
+        console.log("hwnd", @hwnd)
+        ret = parent.append(me)
+
+        if @cls
+            me = $("#hwnd-#{@hwnd}")
+            me.children(".title-bar").children(".title-button-group").children(".title-button.close").click =>
+                @on_proc(0x0010, 0, 0)
+            me.draggable({
+                handle: ".title",
+                drag: (e, u) =>
+                    x = u.position.left
+                    y = u.position.top
+                    console.log("drag:", x, y)
+                    @on_proc(0x0003, 0, x | (y << 16)) # WM_MOVE
+            })
+            me.resizable({
+                handles: "all",
+                minWidth: parseInt(me.css( "min-width" )),
+                minHeight: parseInt(me.css( "min-height" )),
+                resize: (e, u) =>
+                    x = u.position.left
+                    y = u.position.top
+                    w = u.size.width
+                    h = u.size.height
+                    console.log("resize:", x, y, w, h)
+                    @on_proc(0x0005, 0, w | (h << 16)) # WM_SIZE
+                    @on_proc(0x0003, 0, x | (y << 16)) # WM_MOVE
+            })
 
     on_destroy: ->
         me = $("#hwnd-#{@hwnd}")

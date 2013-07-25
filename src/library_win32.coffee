@@ -66,6 +66,8 @@ LibraryWin32 = {
 
         if parent
             parent = window.Win32.system.windows[parent]
+        else
+            parent = null
         win = new window.Win32.Window(
             hwnd, clsname, name, style, x, y, w, h,
             parent, m, i, param, exstyle
