@@ -8,9 +8,9 @@ LibraryWin32 = {
             while (1)
                 assert(ptr + i < TOTAL_MEMORY)
                 t = getValue(ptr+i*4, 'i32')
-                ret.push(t)
                 if t == 0 && !length
                     break
+                ret.push(t)
                 i++
                 if length && i == length
                     break
