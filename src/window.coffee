@@ -69,6 +69,10 @@ class Window
 
         return @name
 
+    inner_win: ->
+        me = @me()
+        return me.children(".inner-window")
+
     css: (c) ->
         me = @me()
         console.log("css:", c, me)
@@ -143,11 +147,13 @@ class Window
             console.log("clss:", @clsname)
             switch @clsname
                 when "EDIT"
-                    me = $("<input type='text' id='hwnd-#{@hwnd}' value='#{@name}' />")
+                    me = $("<input style='position: absolute' type='text' id='hwnd-#{@hwnd}' value='#{@name}' />")
                 when "BUTTON"
-                    me = $("<input type='button' id='hwnd-#{@hwnd}' value='#{@name}' />")
+                    me = $("<input style='position: absolute' type='button' id='hwnd-#{@hwnd}' value='#{@name}' />")
 
         else
+            me = $("<div class='window' id='hwnd-#{@hwnd}'/>")
+
             title_bar = $("""
 <div class="title-bar">
     <div class="title-icon"></div>
@@ -158,14 +164,15 @@ class Window
         <div class="title-button close"></div>
     </div>
 </div>""")
-
-            me = $("<div class='window' id='hwnd-#{@hwnd}'/>")
             me.append(title_bar)
+
+            inner_win = $("<div class='inner-window' style='width: 100%; height: 100%; position: relative;'/>")
+            me.append(inner_win)
 
         parent = system.desktop
         console.log("@parent:", @parent)
         if @parent
-            parent = @parent.me()
+            parent = @parent.inner_win()
         else
             system.active_window = this
             me.children('.title-bar').addClass('ui-selected')
