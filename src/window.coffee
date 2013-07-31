@@ -59,21 +59,24 @@ class Window
         if @h == -2147483648
             @h = 0
 
+    # returns jQuery object of me.
+    me: ->
+        return $("#hwnd-#{@hwnd}")
+
     get_name: ->
         if !@cls
-            me = $("#hwnd-#{@hwnd}")
-            return me.val()
+            return @me().val()
 
         return @name
 
     css: (c) ->
-        me = $("#hwnd-#{@hwnd}")
+        me = @me()
         console.log("css:", c, me)
         if me
             me.css(c)
 
     reshape: ->
-        me = $("#hwnd-#{@hwnd}")
+        me = @me()
         if me == null
             return
 
@@ -162,7 +165,7 @@ class Window
         parent = system.desktop
         console.log("@parent:", @parent)
         if @parent
-            parent = $("#hwnd-#{@parent.hwnd}")
+            parent = @parent.me()
         else
             system.active_window = this
             me.children('.title-bar').addClass('ui-selected')
@@ -171,7 +174,7 @@ class Window
         ret = parent.append(me)
 
         if @cls
-            me = $("#hwnd-#{@hwnd}")
+            me = @me()
             me.children(".title-bar").children(".title-button-group").children(".title-button.close").click =>
                 @on_proc(0x0010, 0, 0)
             me.draggable({
@@ -202,9 +205,8 @@ class Window
                         # XXX we must make button_wnd_proc() for this
                         @parent.on_proc(0x0111, @m, 0) # WM_COMMAND
 
-
     on_destroy: ->
-        me = $("#hwnd-#{@hwnd}")
+        me = @me()
         console.log("on_destroy:", me)
         if me
             @css({display: 'none'})
