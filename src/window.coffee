@@ -23,7 +23,7 @@ class System
 
     send_msg: (msg) ->
         win = @windows[msg.hwnd]
-        if win == null
+        if !win
             return
         ret = win.on_proc(msg.msg, msg.w, msg.l)
 
