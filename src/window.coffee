@@ -3,6 +3,7 @@ class System
         @mq = []
         @classes = {}
         @windows = {}
+        @dcs = {}
 
         @active_window = null
 
@@ -102,6 +103,12 @@ class Window
                 @destroy()
                 return 0
         return 0
+
+    # TODO: create "DC" class
+    text_out: (x, y, msg) ->
+        canvas = @me().children('canvas').get()[0]
+        c = canvas.getContext('2d')
+        c.fillText(msg, x, y)
 
     destroy: ->
         @on_proc(0x0002, 0, 0) # WM_DESTROY
@@ -204,7 +211,24 @@ class Window
                     console.log("resize:", x, y, w, h)
                     @on_proc(0x0005, 0, w | (h << 16)) # WM_SIZE
                     @on_proc(0x0003, 0, x | (y << 16)) # WM_MOVE
+                    @on_proc(0x000F, 0, 0) # WM_PAINT
             })
+
+            @hdc = system.alloc_handle()
+            me.append($('<canvas/>').attr({
+                id: "hdc-#{@hdc}",
+                class: "inner-canvas",
+                width: 500, # XXX
+                height: 500, # XXX
+            }).css(
+                position: "absolute",
+                top: 0, # XXX
+                left: 0, # XXX
+                "z-index": -1,
+            ))
+
+            system.post_msg({hwnd: @hwnd, msg: 0x0F, w: 0, l: 0}) # WM_PAINT
+
         else
             switch @clsname
                 when "BUTTON"

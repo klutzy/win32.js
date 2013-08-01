@@ -40,6 +40,15 @@ long CALLBACK wnd_proc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam) {
         }
         break;
 
+        case WM_PAINT: {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(wnd, &ps);
+            TextOut(hdc, 100, 300, L"WM_PAINT", 8);
+            EndPaint(wnd, &ps);
+            return 0;
+        }
+        break;
+
         case WM_DESTROY: {
             PostQuitMessage(0);
             return 0;

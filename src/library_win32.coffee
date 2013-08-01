@@ -100,6 +100,32 @@ LibraryWin32 = {
             return 0
         msg = win.get_name()
         return Util.str_to(msg, $msg, msglen)
+
+    BeginPaint: (hwnd, $ps) ->
+        win = window.Win32.system.windows[hwnd]
+        if !win
+            return 0
+        hdc = window.Win32.system.alloc_handle()
+        win.hdc = hdc
+        system.dcs[hdc] = win.hwnd
+        return hdc
+
+    EndPaint: (hwnd, $ps) ->
+        win = window.Win32.system.windows[hwnd]
+        if !win
+            return 1
+        hdc = win.hdc
+        delete system.dcs[hdc]
+        win.hdc = null
+        return 1
+
+    TextOutW: (hdc, x, y, $msg, msglen) ->
+        hwnd = window.Win32.system.dcs[hdc]
+        win = window.Win32.system.windows[hwnd]
+        if !win
+            return 0
+        msg = Util.u16($msg, msglen)
+        win.text_out(x, y, msg)
 }
 
 autoAddDeps(LibraryWin32, '$Util')
