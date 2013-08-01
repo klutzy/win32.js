@@ -16,7 +16,7 @@ class System
     main_loop: () =>
         console.log("System.main_loop", @mq)
         while @mq.length > 0
-            msg = delete @mq[0]
+            msg = @mq.shift()
             @send_msg(msg)
         setTimeout(@main_loop, 500)
 
